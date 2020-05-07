@@ -6,10 +6,15 @@ import store from "./store";
 import echarts from 'echarts'
 import ViewUI from 'view-design'
 import 'view-design/dist/styles/iview.css'
+import axios from 'axios'
+import roslib from 'roslib'
+// import eventemitter2 from 'eventemitter2'
 
 Vue.use(ViewUI);
 
 Vue.prototype.$echarts = echarts;
+Vue.prototype.$roslib = roslib;
+Vue.prototype.$axios = axios;
 
 Vue.config.productionTip = false;
 

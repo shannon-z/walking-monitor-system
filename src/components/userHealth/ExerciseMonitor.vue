@@ -5,6 +5,7 @@
 </template>
 
 <script>
+
     export default {
         name: "ExerciseMonitor",
         data() {
@@ -13,6 +14,64 @@
             }
         },
         mounted() {
+
+
+            let ros = new ROSLIB.Ros({
+                url: 'ws://192.168.246.142:9090'
+            });
+            ros.on('connection', function () {
+                console.log('Connected to websocket server.');
+            });
+            ros.on('error', function (error) {
+                console.log('Error connecting to websocket server: ', error);
+            });
+
+            ros.on('close', function () {
+                console.log('Connection to websocket server closed.');
+            });
+            let vel = new ROSLIB.Topic({
+                ros: ros,
+                name: '/people_velocity',
+                messageType: 'std_msgs/String'
+            });
+            let strs = new Array();
+
+            vel.subscribe(function (message) {
+                console.log('Received message on ' + vel.name + ': ' + message.data);
+                document.getElementById("bar").innerHTML = message.data;
+                strs = message.data.split(",");
+                $.ajax({
+                    type: 'POST',
+                    url: '/Lidar/',
+                    dataType: 'json',
+                    data: {
+                        'person_id': strs[0],
+                        'step_length': strs[3],
+                        'person_left_vel': strs[4],
+                        'person_right_vel': strs[5],
+                        'stamp': strs[6]
+                    },
+                    async: false,
+                    success: function (data) {
+                    }
+                });
+                // listener.unsubscribe();
+            });
+            let loc = new ROSLIB.Topic({
+                ros: ros,
+                name: '/people_location',
+                messageType: 'std_msgs/String'
+            });
+            loc.subscribe(function (message) {
+                console.log('Received message on ' + loc.name + ': ' + message.data);
+                // listener.unsubscribe();
+            });
+
+
+
+
+
+
             // let val = 0.7;
             // const option = {
             //     backgroundColor: "#062a44",
