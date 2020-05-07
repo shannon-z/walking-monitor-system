@@ -16,7 +16,7 @@
         mounted() {
 
 
-            let ros = new ROSLIB.Ros({
+            let ros = new this.$roslib.Ros({
                 url: 'ws://192.168.246.142:9090'
             });
             ros.on('connection', function () {
@@ -29,7 +29,7 @@
             ros.on('close', function () {
                 console.log('Connection to websocket server closed.');
             });
-            let vel = new ROSLIB.Topic({
+            let vel = new this.$roslib.Topic({
                 ros: ros,
                 name: '/people_velocity',
                 messageType: 'std_msgs/String'
@@ -40,24 +40,26 @@
                 console.log('Received message on ' + vel.name + ': ' + message.data);
                 document.getElementById("bar").innerHTML = message.data;
                 strs = message.data.split(",");
-                $.ajax({
-                    type: 'POST',
-                    url: '/Lidar/',
-                    dataType: 'json',
-                    data: {
-                        'person_id': strs[0],
-                        'step_length': strs[3],
-                        'person_left_vel': strs[4],
-                        'person_right_vel': strs[5],
-                        'stamp': strs[6]
-                    },
-                    async: false,
-                    success: function (data) {
-                    }
-                });
+                // $.ajax({
+                //     type: 'POST',
+                //     url: '/Lidar/',
+                //     dataType: 'json',
+                //     data: {
+                //         'person_id': strs[0],
+                //         'step_length': strs[3],
+                //         'person_left_vel': strs[4],
+                //         'person_right_vel': strs[5],
+                //         'stamp': strs[6]
+                //     },
+                //     async: false,
+                //     success: function (data) {
+                //     }
+                // });
+
+
                 // listener.unsubscribe();
             });
-            let loc = new ROSLIB.Topic({
+            let loc = new this.$roslib.Topic({
                 ros: ros,
                 name: '/people_location',
                 messageType: 'std_msgs/String'
