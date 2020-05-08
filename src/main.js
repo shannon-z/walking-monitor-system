@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 
 import echarts from 'echarts'
+import ecStat from 'echarts-stat'
 import ViewUI from 'view-design'
 import 'view-design/dist/styles/iview.css'
 import axios from 'axios'
@@ -13,6 +14,7 @@ import roslib from 'roslib'
 Vue.use(ViewUI);
 
 Vue.prototype.$echarts = echarts;
+Vue.prototype.$ecStat = ecStat;
 Vue.prototype.$roslib = roslib;
 Vue.prototype.$axios = axios;
 

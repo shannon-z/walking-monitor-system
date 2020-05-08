@@ -11,6 +11,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "echarts": "^4.7.0",
+    "echarts-stat": "^1.1.1",
     "eventemitter2": "^6.4.0",
     "roslib": "^1.1.0",
     "view-design": "^4.2.0",
