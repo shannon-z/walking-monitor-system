@@ -1,14 +1,28 @@
 <template>
     <div class="main">
-        <div class="track-container">
-            <div id="main" style="width: 800px;height: 600px"></div>
-            <div id="total_vel" style="width: 600px;height: 400px"></div>
+        <div class="btn-container">
+            <div class="track-btn">
+                <Button type="primary" @click="clearTrack" :disabled="full_track_disabled">展示全路径</Button>
+            </div>
+            <div class="track-btn">
+                <Button type="primary" @click="showHalf" :disabled="half_track_disabled">展示近20个点路径</Button>
+            </div>
+            <div class="track-btn">
+                <Button type="primary" @click="clearTrack">清除</Button>
+            </div>
         </div>
-        <div class="vel-container">
-            <!--            <div id="left_vel" style="width: 340px;height: 400px"></div>-->
+        <div class="top-container">
+            <div class="track-container">
+                <div id="main" style="width: 750px;height: 600px"></div>
+            </div>
 
-            <!--            <div id="right_vel" style="width: 340px;height: 400px"></div>-->
+            <div class="vel-container">
+                <div id="left_vel" style="width: 350px;height: 200px"></div>
+                <div id="total_vel" style="width: 350px;height: 200px"></div>
+                <div id="right_vel" style="width: 350px;height: 200px"></div>
+            </div>
         </div>
+
 
     </div>
 </template>
@@ -22,6 +36,8 @@
             return {
                 option: {},
                 vel_option: {},
+                right_vel_option: {},
+                left_vel_option: {},
                 interval: '',
                 track_list: trackData,
 
@@ -33,6 +49,13 @@
                 num: 0,
 
                 val: 0,
+
+                full_track_flag: true,
+                clear_track_flag: false,
+                half_track_flag: false,
+
+                full_track_disabled: true,
+                half_track_disabled: false,
             }
         },
         mounted() {
@@ -116,6 +139,36 @@
 
         },
         methods: {
+
+
+            showHalf() {
+                clearInterval(this.interval);
+                this.half_track_flag = true;
+                this.full_track_flag = false;
+
+                this.half_track_disabled = true;
+                this.full_track_disabled = false;
+
+                this.option.series.data = [];
+                this.option.series.markLine.data = [];
+
+                this.drawPosition();
+            },
+
+            clearTrack() {
+                clearInterval(this.interval);
+                this.full_track_flag = true;
+                this.half_track_flag = false;
+
+                this.full_track_disabled = true;
+                this.half_track_disabled = false;
+
+                this.option.series.data = [];
+                this.option.series.markLine.data = [];
+
+                this.drawPosition();
+            },
+
             convertData() {
                 const promise = new Promise((resolve, reject) => {
 
@@ -147,6 +200,8 @@
                 let self = this;
                 let myChart = this.$echarts.init(document.getElementById('main'));
                 let vel_chart = this.$echarts.init(document.getElementById('total_vel'));
+                let left_vel_chart = this.$echarts.init(document.getElementById('left_vel'));
+                let right_vel_chart = this.$echarts.init(document.getElementById('right_vel'));
                 let data = this.position_list;
                 // let data = [
                 //     [2.441611, 0.444826],
@@ -221,18 +276,25 @@
                                 //         coord: [-3.344465, 2.603513],
                                 //     }
                                 // ]
-                            ]
-                        }
+                            ],
+                            lineStyle: {
+                                color: '#ccc',
+                                type: 'dotted',
+                                width: 0.5,
+                            },
+                        },
+
                     },
                 };
 
                 self.vel_option = {
+
                     backgroundColor: "#062a44",
                     series: [{
                         type: 'gauge',
-                        radius: '60%',
+                        radius: '90%',
                         min: 0,
-                        max: 1,
+                        max: 5,
                         startAngle: 225,
                         endAngle: -45,
                         axisLine: {
@@ -248,7 +310,7 @@
                             lineStyle: {
                                 color: '#fff',
                             },
-                            length: -8
+                            length: -10
                         }, //刻度样式
                         splitLine: {
                             show: true,
@@ -270,7 +332,9 @@
                     },
                         {
                             type: 'gauge',
-                            radius: '45%',
+                            min: 0,
+                            max: 5,
+                            radius: '55%',
                             center: ['50%', '50%'],
                             startAngle: 225,
                             endAngle: -45,
@@ -280,7 +344,8 @@
                                     width: 10,
                                     color: [
                                         [0, '#FFC700'],
-                                        [self.val, '#FFC700'], // 数据
+                                        // [self.val, '#FFC700'], // 数据
+                                        [0, '#FFC700'], // 数据
                                         [1, '#999999']
                                     ]
 
@@ -313,7 +378,7 @@
                                 offsetCenter: [0, '-26%'], // x, y，单位px
                                 textStyle: {
                                     color: '#fff',
-                                    fontSize: 16
+                                    fontSize: 10
                                 }
                             },
                             //仪表盘详情，用于显示数据。
@@ -325,75 +390,118 @@
                                     return params + 'm/s'
                                 },
                                 textStyle: {
-                                    fontSize: 22
+                                    fontSize: 12
                                 }
                             },
                             data: [{
                                 name: "当前行走速度",
-                                // value: '2'
-                                value: self.val
+                                value: 0,
+                                // value: self.val
                             }]
                         }
                     ]
                 };
 
+                self.left_vel_option = JSON.parse(JSON.stringify(self.vel_option));
+                self.left_vel_option.series[1].data[0].name = '左脚行走速度';
+
+                self.right_vel_option = JSON.parse(JSON.stringify(self.vel_option));
+                self.right_vel_option.series[1].data[0].name = '右脚行走速度';
+
 
                 let i = 0;
                 self.interval = setInterval(() => {
-                    // console.log(i);
-                    if (i <= data.length) {
+                    // console.log(self.num);
+                    if (self.num <= data.length && data.length > 0) {
                         let obj = {
-                            value: data[i],
+                            value: data[self.num],
                             symbol: 'pin',
                             symbolSize: 20,
                             itemStyle: {
                                 color: '#2f4554'
                             }
                         };
-                        if (i > 0) {
-                            self.option.series.data[i - 1] = {
-                                value: data[i - 1],
-                                symbol: 'circle',
-                                symbolSize: 10,
-                                itemStyle: {
-                                    color: '#61a0a8'
+
+                        if (self.num > 0) {
+
+
+                            if (self.half_track_flag) {
+                                console.log('i' + i);
+                                if (i < 20) {
+                                    self.option.series.data[i] = {
+                                        value: data[self.num - 1],
+                                        symbol: 'circle',
+                                        symbolSize: 5,
+                                        itemStyle: {
+                                            color: '#61a0a8'
+                                        }
+                                    };
+                                } else {
+                                    self.option.series.data[20] = {
+                                        value: data[self.num],
+                                        symbol: 'circle',
+                                        symbolSize: 5,
+                                        itemStyle: {
+                                            color: '#61a0a8'
+                                        }
+                                    };
+
+                                    self.option.series.data.shift();
+                                    self.option.series.markLine.data.shift();
                                 }
-                            };
+                            }
+
+                            if (self.full_track_flag) {
+
+                                self.option.series.data[i] = {
+                                    value: data[self.num - 1],
+                                    symbol: 'circle',
+                                    symbolSize: 5,
+                                    itemStyle: {
+                                        color: '#61a0a8'
+                                    }
+                                };
+                            }
+
+                            i++;
+
 
                             let coord_list = [];
-                            coord_list.push({coord: data[i - 1]});
-                            coord_list.push({coord: data[i]});
+                            coord_list.push({coord: data[self.num - 1]});
+                            coord_list.push({coord: data[self.num]});
 
                             self.option.series.markLine.data.push(coord_list);
                         }
+
                         self.option.series.data.push(obj);
+
+                        if (self.vel_list[self.num]) {
+                            //初始化vel_option
+                            self.val = parseFloat(self.vel_list[self.num].slice(0, 5));
+                            self.vel_option.series[1].data[0].value = self.val;
+                            self.vel_option.series[1].axisLine.lineStyle.color[1][0] = parseFloat((parseFloat(self.vel_list[self.num])/5).toString().slice(0, 5));
+
+                            let left_val = parseFloat(self.left_vel_list[self.num].slice(0, 5));
+                            self.left_vel_option.series[1].data[0].value = left_val;
+                            self.left_vel_option.series[1].axisLine.lineStyle.color[1][0] = parseFloat((parseFloat(self.left_vel_list[self.num])/5).toString().slice(0, 5));
+
+                            let right_val = parseFloat(self.right_vel_list[self.num].slice(0, 5));
+                            self.right_vel_option.series[1].data[0].value = right_val;
+                            self.right_vel_option.series[1].axisLine.lineStyle.color[1][0] = parseFloat((parseFloat(self.right_vel_list[self.num])/5).toString().slice(0, 5));
+                        }
                     }
 
-                    //初始化vel_option
-                    self.val = parseFloat(self.vel_list[i].slice(0, 5));
-                    self.vel_option.series[1].data[0].value = self.val;
-                    self.vel_option.series[1].axisLine.lineStyle.color[1][0] = self.val;
 
-                    i++;
-                    // self.num++;
+                    self.num++;
                     myChart.setOption(self.option);
                     vel_chart.setOption(self.vel_option);
+                    left_vel_chart.setOption(self.left_vel_option);
+                    right_vel_chart.setOption(self.right_vel_option);
 
                 }, 1000);
 
             },
 
-            drawVelChart() {
-                let self = this;
-                // console.log(self.vel_list);
-                if (self.num < self.vel_list.length) {
-
-                    // let val = 0.7;
-
-
-                }
-
-            }
         },
         beforeDestroy() {
             clearInterval(this.interval);
@@ -402,18 +510,39 @@
 </script>
 
 <style lang="scss" scoped>
+
     .main {
+
         display: flex;
         flex-direction: column;
 
-        .track-container {
+        .btn-container {
+
+            width: 200px;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: row;
+
+            .track-btn {
+                margin-left: 60px;
+            }
+        }
+
+        .top-container {
+
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            .track-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
         }
 
         .vel-container {
             display: flex;
+            flex-direction: column;
             justify-content: center;
         }
     }

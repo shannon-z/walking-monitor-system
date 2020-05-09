@@ -153,7 +153,8 @@
         }
 
         .right-container {
-            margin: 70px 24px 0;
+            margin: 30px 24px 0;
+            /*margin: 70px 24px 0;*/
             width: 100%;
         }
     }
