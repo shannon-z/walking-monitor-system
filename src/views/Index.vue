@@ -43,48 +43,48 @@
                                 des: '健康分析',
                                 path: 'exerciseAnalyse',
                             },
-                            {
-                                name: '03',
-                                icon: 'md-document',
-                                des: '运动校验',
-                                path: 'exerciseVerify',
-                            },
+                            // {
+                            //     name: '03',
+                            //     icon: 'md-document',
+                            //     des: '运动校验',
+                            //     path: 'exerciseVerify',
+                            // },
                         ]
                     },
-                    {
-                        title: '内容管理',
-                        children: [
-                            {
-                                name: '11',
-                                icon: 'md-document',
-                                des: 'xxx',
-                                path: 'exerciseMonitor',
-                            },
-                            {
-                                name: '12',
-                                icon: 'md-document',
-                                des: 'xxx',
-                                path: 'exerciseMonitor',
-                            },
-                        ]
-                    },
-                    {
-                        title: '统计分析',
-                        children: [
-                            {
-                                name: '21',
-                                icon: 'md-heart',
-                                des: 'xxx',
-                                path: 'exerciseMonitor',
-                            },
-                            {
-                                name: '22',
-                                icon: 'md-leaf',
-                                des: 'xxx',
-                                path: 'exerciseMonitor',
-                            },
-                        ]
-                    },
+                    // {
+                    //     title: '内容管理',
+                    //     children: [
+                    //         {
+                    //             name: '11',
+                    //             icon: 'md-document',
+                    //             des: 'xxx',
+                    //             path: 'exerciseMonitor',
+                    //         },
+                    //         {
+                    //             name: '12',
+                    //             icon: 'md-document',
+                    //             des: 'xxx',
+                    //             path: 'exerciseMonitor',
+                    //         },
+                    //     ]
+                    // },
+                    // {
+                    //     title: '统计分析',
+                    //     children: [
+                    //         {
+                    //             name: '21',
+                    //             icon: 'md-heart',
+                    //             des: 'xxx',
+                    //             path: 'exerciseMonitor',
+                    //         },
+                    //         {
+                    //             name: '22',
+                    //             icon: 'md-leaf',
+                    //             des: 'xxx',
+                    //             path: 'exerciseMonitor',
+                    //         },
+                    //     ]
+                    // },
                 ],
                 active_menu: '',
             }
