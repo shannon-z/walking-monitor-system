@@ -7,7 +7,7 @@ const index = () => import('@/views/Index');//懒加载模式引入路由
 const home = () => import('@/components/home/Home');
 const exerciseMonitor = () => import('@/components/userHealth/ExerciseMonitor');
 const exerciseAnalyse = () => import('@/components/userHealth/ExerciseAnalyse');
-const exerciseVerify = () => import('@/components/userHealth/ExerciseVerify');
+// const exerciseVerify = () => import('@/components/userHealth/ExerciseVerify');
 
 const routes = [
     {
@@ -30,11 +30,11 @@ const routes = [
                 name: '健康分析',
                 component: exerciseAnalyse
             },
-            {
-                path: '/exerciseVerify',
-                name: '运动校验',
-                component: exerciseVerify
-            },
+            // {
+            //     path: '/exerciseVerify',
+            //     name: '运动校验',
+            //     component: exerciseVerify
+            // },
         ]
     }
 ]
