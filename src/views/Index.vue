@@ -139,10 +139,12 @@
         display: flex;
         flex-wrap: nowrap;
         flex-direction: row;
+        height: 100%;
 
         .left-container {
 
             width: 240px;
+            height: 100%;
 
             .main-title {
                 padding: 20px 0;
@@ -150,12 +152,16 @@
                 font-size: 20px;
                 font-weight: bold;
             }
+
+            .menu {
+                height: calc(100% - 70px);
+                box-shadow: 5px 0 5px rgba(0,0,0,.05);
+            }
         }
 
         .right-container {
-            margin: 30px 24px 0;
+            /*padding: 30px 24px 0;*/
             /*margin: 70px 24px 0;*/
-            width: 100%;
         }
     }
 
